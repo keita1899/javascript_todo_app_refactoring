@@ -52,6 +52,28 @@ const deleteTodo = () => {
   saveToLocalStorage()
 }
 
+// todoを編集する
+const editTodo = () => {
+  createEditForm(todo.text)
+}
+
+// todoを更新する
+const updateTodo = () => {
+  const updateTodoText = document.getElementById('edit-input').value.trim()
+  if (updateTodoText === '') return
+
+  todo.text = updateTodoText
+  todoContainer.innerHTML = ''
+  saveToLocalStorage()
+  renderTodo()
+}
+
+// 編集フォームからtodoに戻す
+const revertTodo = () => {
+  todoContainer.innerHTML = ''
+  renderTodo()
+}
+
 // todoを生成する
 const createTodo = (todo) => {
   const div = document.createElement('div')
@@ -73,9 +95,40 @@ const createTodo = (todo) => {
   editButton.classList.add('edit-button')
   editButton.textContent = '編集'
 
+  editButton.addEventListener('click', () => {
+    editTodo()
+  })
+
   div.append(completeButton, span, editButton)
 
   return div
+}
+
+// 編集フォームを生成してtodoと切り替える
+const createEditForm = (todoText) => {
+  const editInput = document.createElement('input')
+  editInput.classList.add('edit-input')
+  editInput.setAttribute('id', 'edit-input')
+  editInput.value = todoText
+
+  const updateButton = document.createElement('button')
+  updateButton.setAttribute('type','button')
+  updateButton.classList.add('update-button')
+  updateButton.textContent = '更新'
+  updateButton.addEventListener('click', () => {
+    updateTodo()
+  })
+
+  const revertButton = document.createElement('button')
+  revertButton.setAttribute('type','button')
+  revertButton.classList.add('revert-button')
+  revertButton.textContent = '戻す'
+  revertButton.addEventListener('click', () => {
+    revertTodo()
+  })
+
+  todoContainer.innerHTML = ''
+  todoContainer.append(editInput, updateButton, revertButton)
 }
 
 const renderTodo = () => {
