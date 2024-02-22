@@ -22,6 +22,7 @@ const loadFromLocalStorage = () => {
 const saveToLocalStorage = () => {
   localStorage.setItem('todo', JSON.stringify(todo))
   localStorage.setItem('addButtonDisabled', addButton.disabled)
+  localStorage.setItem('deleteTodoButtonDisabled', deleteTodoButton.disabled)
 }
 
 // todoを追加する
@@ -40,6 +41,14 @@ const addTodo = () => {
   addButton.disabled = true
   deleteTodoButton.disabled = false
 
+  saveToLocalStorage()
+}
+
+// todoを削除する
+const deleteTodo = () => {
+  todo = null
+  deleteTodoButton.disabled = true
+  addButton.disabled = false
   saveToLocalStorage()
 }
 
@@ -85,5 +94,11 @@ document.addEventListener('DOMContentLoaded', () => {
 // 保存ボタンをクリックしたとき
 addButton.addEventListener('click', () => {
   addTodo()
+  renderTodo()
+})
+
+// 削除ボタンをクリックしたとき
+deleteTodoButton.addEventListener('click', () => {
+  deleteTodo()
   renderTodo()
 })
