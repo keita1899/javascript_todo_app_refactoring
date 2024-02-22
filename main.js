@@ -1,28 +1,37 @@
 let todoIndex = 1
 let todo = null
+let completedTodos = []
 
 const todoContainer = document.getElementById('todo-container')
+const completedTodoList = document.getElementById('completed-todolist')
 const todoInput = document.getElementById('todo-input')
 const addButton = document.getElementById('add-button')
+const completeButton = document.getElementById('complete-button')
 const deleteTodoButton = document.getElementById('delete-todo-button')
+const deleteAllButton = document.getElementById('delete-all-todo-button')
 
 // ローカルストレージのデータを読み込む
 const loadFromLocalStorage = () => {
   const storedTodo = localStorage.getItem('todo')
+  const storedCompletedTodos = localStorage.getItem('completedTodos')
   const addButtonDisabled = localStorage.getItem('addButtonDisabled')
   const deleteTodoButtonDisabled = localStorage.getItem('deleteTodoButtonDisabled')
+  const deleteAllButtonDisabled = localStorage.getItem('deleteAllButtonDisabled')
 
   todo = storedTodo ? JSON.parse(storedTodo) : null
+  completedTodos = storedCompletedTodos ? JSON.parse(storedCompletedTodos) : []
   addButton.disabled = addButtonDisabled === 'true'
   deleteTodoButton.disabled = deleteTodoButtonDisabled === 'true'
-
+  deleteAllButton.disabled = deleteAllButtonDisabled === 'true'
 }
 
 // ローカルストレージにデータを保存する
 const saveToLocalStorage = () => {
   localStorage.setItem('todo', JSON.stringify(todo))
+  localStorage.setItem('completedTodos', JSON.stringify(completedTodos))
   localStorage.setItem('addButtonDisabled', addButton.disabled)
   localStorage.setItem('deleteTodoButtonDisabled', deleteTodoButton.disabled)
+  localStorage.setItem('deleteAllButtonDisabled', deleteAllButton.disabled)
 }
 
 // todoを追加する
@@ -74,6 +83,17 @@ const revertTodo = () => {
   renderTodo()
 }
 
+// todoを完了する
+const completeTodo = () => {
+  if (todo) {
+    todo.isCompleted = true
+    completedTodos.push(todo)
+    deleteAllButton.disabled = false
+    renderCompletedTodos()
+    deleteTodo()
+  }
+}
+
 // todoを生成する
 const createTodo = (todo) => {
   const div = document.createElement('div')
@@ -85,6 +105,10 @@ const createTodo = (todo) => {
   completeButton.classList.add('complete-button')
   completeButton.setAttribute('id', 'complete-button')
   completeButton.textContent = '完了'
+  completeButton.addEventListener('click', () => {
+    completeTodo()
+    renderTodo()
+  })
 
   const span = document.createElement('span')
   span.classList.add('todo-text')
@@ -102,6 +126,24 @@ const createTodo = (todo) => {
   div.append(completeButton, span, editButton)
 
   return div
+}
+
+const createCompletedTodo = (todo) => {
+  const li = document.createElement('li')
+  li.classList.add('completed-todo')
+
+  const span = document.createElement('span')
+  span.classList.add('todo-text')
+  span.textContent = todo.text
+
+  const deleteCompletedTodoButton = document.createElement('button')
+  deleteCompletedTodoButton.setAttribute('type','button')
+  deleteCompletedTodoButton.classList.add('delete-completed-todo-button')
+  deleteCompletedTodoButton.textContent = '削除'
+
+  li.append(span, deleteCompletedTodoButton)
+
+  return li
 }
 
 // 編集フォームを生成してtodoと切り替える
@@ -137,6 +179,15 @@ const renderTodo = () => {
     const div = createTodo(todo)
     todoContainer.appendChild(div)
   }
+}
+
+// completedTodosを元に完了したtodoをレンダリングする
+const renderCompletedTodos = () => {
+  completedTodoList.innerHTML = ''
+  completedTodos.forEach(todo => {
+    const completeTodo = createCompletedTodo(todo)
+    completedTodoList.appendChild(completeTodo)
+  })
 }
 
 document.addEventListener('DOMContentLoaded', () => {
