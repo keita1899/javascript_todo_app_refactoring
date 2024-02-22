@@ -94,6 +94,13 @@ const completeTodo = () => {
   }
 }
 
+// 完了したtodoを全て削除する
+const deleteAllTodo = () => {
+  completedTodos = []
+  deleteAllButton.disabled = true
+  saveToLocalStorage()
+}
+
 // todoを生成する
 const createTodo = (todo) => {
   const div = document.createElement('div')
@@ -205,4 +212,10 @@ addButton.addEventListener('click', () => {
 deleteTodoButton.addEventListener('click', () => {
   deleteTodo()
   renderTodo()
+})
+
+// 全て削除ボタンをクリックしたとき
+deleteAllButton.addEventListener('click', () => {
+  deleteAllTodo()
+  renderCompletedTodos()
 })
