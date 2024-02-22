@@ -101,6 +101,13 @@ const deleteAllTodo = () => {
   saveToLocalStorage()
 }
 
+// 選択したtodoを削除する
+const deleteCompletedTodo = (id) => {
+  completedTodos = completedTodos.filter(todo => todo.id !== id)
+  saveToLocalStorage()
+  renderCompletedTodos()
+}
+
 // todoを生成する
 const createTodo = (todo) => {
   const div = document.createElement('div')
@@ -147,6 +154,10 @@ const createCompletedTodo = (todo) => {
   deleteCompletedTodoButton.setAttribute('type','button')
   deleteCompletedTodoButton.classList.add('delete-completed-todo-button')
   deleteCompletedTodoButton.textContent = '削除'
+  deleteCompletedTodoButton.addEventListener('click', () => {
+    deleteCompletedTodo(todo.id)
+    renderCompletedTodos()
+  })
 
   li.append(span, deleteCompletedTodoButton)
 
@@ -200,6 +211,7 @@ const renderCompletedTodos = () => {
 document.addEventListener('DOMContentLoaded', () => {
   loadFromLocalStorage()
   renderTodo()
+  renderCompletedTodos()
 })
 
 // 保存ボタンをクリックしたとき
